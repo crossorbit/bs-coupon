@@ -12,12 +12,12 @@ import java.util.List;
 import java.util.Optional;
 
  @RestController
- public class couponController {
+ public class CouponController {
 
-  @GetMapping("/selectCouponInfo")
-  @HystrixCommand(fallbackMethod = "fallbackCoupon", commandProperties = {
-          @HystrixProperty(name = "execution.isolation.thread.timeoutInMilliseconds", value = "5000"),
-          @HystrixProperty(name = "circuitBreaker.sleepWindowInMilliseconds", value = "10000")
+    @GetMapping("/selectCouponInfo")
+    @HystrixCommand(fallbackMethod = "fallbackCoupon", commandProperties = {
+    @HystrixProperty(name = "execution.isolation.thread.timeoutInMilliseconds", value = "5000"),
+    @HystrixProperty(name = "circuitBreaker.sleepWindowInMilliseconds", value = "10000")
   })
   public @ResponseBody String selectCouponInfo(@RequestParam long couponId) throws InterruptedException {
     
