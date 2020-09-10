@@ -16,20 +16,12 @@ spec:
     spec:
       containers:
         - name: coupon
-          image: username/coupon:latest
+          image: admin16cr.azurecr.io/coupon:latest
           ports:
             - containerPort: 8080
-          readinessProbe:
-            httpGet:
-              path: '/actuator/health'
-              port: 8080
-            initialDelaySeconds: 10
-            timeoutSeconds: 2
-            periodSeconds: 5
-            failureThreshold: 10
           livenessProbe:
             httpGet:
-              path: '/actuator/health'
+              path: '/isHealthy'
               port: 8080
             initialDelaySeconds: 120
             timeoutSeconds: 2
