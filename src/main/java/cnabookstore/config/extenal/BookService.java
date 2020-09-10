@@ -1,5 +1,5 @@
 
-package cnabookstore.order.external;
+package cnabookstore.config.extenal;
 
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.PathVariable;

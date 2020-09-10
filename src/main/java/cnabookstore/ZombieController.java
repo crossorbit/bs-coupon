@@ -1,6 +1,6 @@
-package cnabookstore.config.external;
+package cnabookstore;
 
-import cnabookstore.config.external.BookService;
+import cnabookstore.config.extenal.BookService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
