@@ -19,11 +19,11 @@ spec:
           image: admin16cr.azurecr.io/coupon:latest
           ports:
             - containerPort: 8080
-          readinessProbe:
+          livenessProbe:
             httpGet:
-              path: '/coupons'
+              path: '/isHealthy'
               port: 8080
-            initialDelaySeconds: 10
+            initialDelaySeconds: 120
             timeoutSeconds: 2
             periodSeconds: 5
-            failureThreshold: 10
+            failureThreshold: 5
