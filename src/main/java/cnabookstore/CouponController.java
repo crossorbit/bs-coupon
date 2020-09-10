@@ -5,14 +5,14 @@ import com.netflix.hystrix.contrib.javanica.annotation.HystrixCommand;
 import com.netflix.hystrix.contrib.javanica.annotation.HystrixProperty;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-import com.netflix.hystrix.HystrixCommand;
-import com.netflix.hystrix.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.List;
 import java.util.Optional;
 
+ @RestController
+ public class couponController {
 
   @GetMapping("/selectCouponInfo")
   @HystrixCommand(fallbackMethod = "fallbackCoupon", commandProperties = {
@@ -20,11 +20,11 @@ import java.util.Optional;
           @HystrixProperty(name = "circuitBreaker.sleepWindowInMilliseconds", value = "10000")
   })
   public @ResponseBody String selectCouponInfo(@RequestParam long couponId) throws InterruptedException {
-    System.out.println("@@@ CircuitBreaker");
+    
     if (couponId == 0) {
       System.out.println("@@@ CircuitBreaker");
       Thread.sleep(10000);
-     return "CouponInfo_Failed";
+      return "CircuitBreaker";
     } else {
       System.out.println("@@@ CouponInfo OK");
       return "CouponInfo_Completed";
@@ -33,7 +33,7 @@ import java.util.Optional;
 
   public String fallbackCoupon(long couponId ){
     System.out.println("### fallback!!!");
-    return "fallbackCoupon";
+    return "CircuitBreaker";
   }
 
  }
