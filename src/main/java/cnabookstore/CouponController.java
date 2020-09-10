@@ -14,28 +14,19 @@ import java.util.List;
 import java.util.Optional;
 
 
- @RestController
- public class CouponController {
-
-  boolean flag;
-
-  public VanController(){
-   flag = true;
-  }
-
   @GetMapping("/selectCouponInfo")
   @HystrixCommand(fallbackMethod = "fallbackCoupon", commandProperties = {
           @HystrixProperty(name = "execution.isolation.thread.timeoutInMilliseconds", value = "5000"),
           @HystrixProperty(name = "circuitBreaker.sleepWindowInMilliseconds", value = "10000")
   })
   public @ResponseBody String selectCouponInfo(@RequestParam long couponId) throws InterruptedException {
-    System.out.println("@@@ requestPayment!!!");
+    System.out.println("@@@ CircuitBreaker");
     if (couponId == 0) {
-      System.out.println("@@@ CircuitBreaker!!!");
+      System.out.println("@@@ CircuitBreaker");
       Thread.sleep(10000);
      return "CouponInfo_Failed";
     } else {
-      System.out.println("@@@ Success!!!");
+      System.out.println("@@@ CouponInfo OK");
       return "CouponInfo_Completed";
     }
   }
@@ -43,21 +34,6 @@ import java.util.Optional;
   public String fallbackCoupon(long couponId ){
     System.out.println("### fallback!!!");
     return "fallbackCoupon";
-  }
-
-  @GetMapping("/isHealthy")
-  public void test() throws Exception {
-   if (flag) {
-    System.out.println("health.... !!!");
-   }
-   else{
-    throw new Exception("Zombie...");
-   }
-  }
-
-  @GetMapping("/makeZombie")
-  public void zombie(){
-   flag = false;
   }
 
  }
