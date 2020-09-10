@@ -1,68 +1,63 @@
 package cnabookstore;
 
 
-import java.util.Optional;
 import com.netflix.hystrix.contrib.javanica.annotation.HystrixCommand;
 import com.netflix.hystrix.contrib.javanica.annotation.HystrixProperty;
-
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+import com.netflix.hystrix.HystrixCommand;
+import com.netflix.hystrix.*;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.util.List;
+import java.util.Optional;
 
 
  @RestController
  public class CouponController {
 
-  @Autowired
-  CouponRepository couponRepository;
+  boolean flag;
 
-  @GetMapping("/circuitBreaker")
-  @HystrixCommand(fallbackMethod = "fallback", commandProperties = {
-          @HystrixProperty(name = "execution.isolation.thread.timeoutInMilliseconds", value = "5000"),
-//          @HystrixProperty(name = "metrics.rollingStats.timeInMilliseconds", value = "10000"),
-//          @HystrixProperty(name = "circuitBreaker.errorThresholdPercentage", value = "10"),
-//          @HystrixProperty(name = "circuitBreaker.requestVolumeThreshold", value = "5"),
-          @HystrixProperty(name = "circuitBreaker.sleepWindowInMilliseconds", value = "10000")
-  })
-  public String circuitBreakerTest(@RequestParam String isYn) throws InterruptedException {
-
-   if (isYn.equals("Y")) {
-    System.out.println("### Circuit Breaker ###");
-    Thread.sleep(10000);
-   }
-
-   System.out.println("### Coupon Success ###");
-   return "Coupon Success";
+  public VanController(){
+   flag = true;
   }
 
-  @GetMapping("/selectDeliveryInfo")
-  @HystrixCommand(fallbackMethod = "fallbackDelivery", commandProperties = {
+  @GetMapping("/selectCouponInfo")
+  @HystrixCommand(fallbackMethod = "fallbackCoupon", commandProperties = {
           @HystrixProperty(name = "execution.isolation.thread.timeoutInMilliseconds", value = "5000"),
           @HystrixProperty(name = "circuitBreaker.sleepWindowInMilliseconds", value = "10000")
   })
-  public String selectCouponInfo(@RequestParam long couponId) throws InterruptedException {
+  public @ResponseBody String selectCouponInfo(@RequestParam long couponId) throws InterruptedException {
+    System.out.println("@@@ requestPayment!!!");
+    if (couponId == 0) {
+      System.out.println("@@@ CircuitBreaker!!!");
+      Thread.sleep(10000);
+     return "CouponInfo_Failed";
+    } else {
+      System.out.println("@@@ Success!!!");
+      return "CouponInfo_Completed";
+    }
+  }
 
-   if (couponId <= 0) {
-    System.out.println("### Circuit Breaker ###");
-    Thread.sleep(10000);
-    //throw new RuntimeException("CircuitBreaker!!!");
-   } else {
-    Optional<Coupon> coupon = couponRepository.findByCouponId(couponId);
-    return coupon.get().getCouponStatus();
+  public String fallbackCoupon(long couponId ){
+    System.out.println("### fallback!!!");
+    return "fallbackCoupon";
+  }
+
+  @GetMapping("/isHealthy")
+  public void test() throws Exception {
+   if (flag) {
+    System.out.println("health.... !!!");
    }
-
-   System.out.println("### Coupon Success ###");
-   return "Coupon Success";
+   else{
+    throw new Exception("Zombie...");
+   }
   }
 
-  private String fallback(String isYn) {
-   System.out.println("### fallback ###");
-   return "Circuit Breaker";
+  @GetMapping("/makeZombie")
+  public void zombie(){
+   flag = false;
   }
 
-  private String fallbackDelivery(long deliveryId) {
-   System.out.println("### fallback!!!");
-   return "CircuitBreaker!!!";
-  }
  }
